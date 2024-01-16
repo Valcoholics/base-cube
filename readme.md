@@ -1,9 +1,10 @@
 # Base Cube
 
-Draft - plain markdown without Images or Links 
----
+Working Draft - plain markdown without Images or Links 
 
-My name is Valerie. I have a goal to become a full stack creative technologist. I'm currently building a portfolio of projects aligned with data/music visualizations, art experiments, and onchain apps outside of the lens of financialization. I'm using this bootcamp as a way to deepen my learning of Solidity, Base network, and connect with those that can help build that vision.
+## My name is Valerie. 
+
+I have a goal to become a full stack creative technologist. I'm currently building a portfolio of projects aligned with data/music visualizations, art experiments, and onchain apps outside of the lens of financialization. I'm using this bootcamp as a way to deepen my learning of Solidity, Base network, and connect with those that can help build that vision.
 
 I built Base Cube, an onchain app that visualizes data from the Base Network and allows people to playfully interact with Base through a Rubik’s cube game.
 
