@@ -66,7 +66,7 @@ class Rubiks {
     }
 
     /**
-     * 打乱
+     * Shuffle
      */
     public disorder() {
         if (this.cube) {
@@ -75,7 +75,7 @@ class Rubiks {
     }
 
     /**
-     * 还原
+     * Restore
      */
     public restore() {
         if (this.cube) {

@@ -21,7 +21,7 @@ window.onload = () => {
         });
 
         restore.addEventListener("click", () => {
-            const ok = window.confirm("还原后，不可恢复哦！");
+            const ok = window.confirm("refresh?");
 
             if (ok) {
                 rubiks.restore();

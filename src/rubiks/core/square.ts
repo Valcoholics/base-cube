@@ -47,7 +47,7 @@ export const createSquare = (color: Color, element: CubeElement) => {
     square.position.set(posX, posY, posZ);
 
     if (element.withLogo) {
-        textureLoader.load("https://pengfeiw.github.io/assests/logo/w.png", (texture) => {
+        textureLoader.load("https://valcoholics.github.io/Base_Symbol_Black.png", (texture) => {
             const geo2 = new PlaneGeometry(1, 1, 1);
             const mat3 = new MeshBasicMaterial({
                 map: texture,
