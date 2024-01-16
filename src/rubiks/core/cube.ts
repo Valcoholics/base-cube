@@ -6,6 +6,9 @@ import CubeData, {CubeElement} from "./cubeData";
 import CubeState, {RotateDirection} from "./cubeState";
 import {createSquare, SquareMesh} from "./square";
 
+
+// to do: translating comments
+
 /**
  * 获取square向里平移0.5的方块大小的位置
  */

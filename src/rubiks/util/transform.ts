@@ -1,5 +1,7 @@
 import {Matrix4, Object3D, Vector3} from "three";
 
+// to do: translating comments
+
 export const rotateAroundWorldAxis = (object: Object3D, axis: Vector3, radians: number) => {
     const mat = new Matrix4();
     mat.makeRotationAxis(axis.normalize(), radians);

@@ -5,6 +5,8 @@ import createRenderer from "./components/renderer";
 import {Cube} from "./core/cube";
 import Control, {MouseControl, TouchControl} from "./core/control";
 
+// to do: translating comments
+
 const setSize = (container: Element, camera: PerspectiveCamera, renderer: WebGLRenderer) => {
     // Set the camera's aspect ratio
     camera.aspect = container.clientWidth / container.clientHeight;
@@ -112,3 +114,4 @@ class Rubiks {
 }
 
 export default Rubiks;
+

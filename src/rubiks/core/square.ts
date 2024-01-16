@@ -1,8 +1,9 @@
 import {Shape, ShapeGeometry, MeshBasicMaterial, Mesh, Color, Object3D, Group, Plane, PlaneGeometry, DoubleSide, TextureLoader, Vector3} from "three";
 import {CubeElement} from "./cubeData";
 
-const textureLoader = new TextureLoader();
+// to do: translating comments
 
+const textureLoader = new TextureLoader();
 
 export const createSquare = (color: Color, element: CubeElement) => {
     const squareShape = new Shape();

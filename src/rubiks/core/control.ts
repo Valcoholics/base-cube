@@ -4,6 +4,8 @@ import {rotateAroundWorldAxis, ndcToScreen} from "../util/transform";
 import {SquareMesh} from "./square";
 import {setFinish} from "./statusbar";
 
+// to do: translating comments
+
 let spanEle: HTMLSpanElement;
 
 const testSquareScreenPosition = (cube: Cube, square: SquareMesh, camera: Camera) => {
@@ -249,4 +251,6 @@ export class TouchControl extends Control {
     }
 }
 
+
 export default Control;
+

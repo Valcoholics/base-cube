@@ -1,5 +1,6 @@
 import Rubiks from "./rubiks/index";
 
+// to do: translating comments 
 
 window.onload = () => {
     const container = document.getElementById("container");

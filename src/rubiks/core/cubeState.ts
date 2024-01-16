@@ -1,6 +1,8 @@
 import {Vector3, Vector2} from "three";
 import {SquareMesh} from "./square";
 
+// to do: translating comments
+
 export interface RotateDirection {
     screenDir: Vector2; // 屏幕方向向量
     startSquare: SquareMesh; // 代表方向的起始square，用于记录旋转的local方向

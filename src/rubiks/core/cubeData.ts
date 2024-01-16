@@ -1,5 +1,7 @@
 import {Vector3} from "three";
 
+// to do: translating comments
+
 type ColorRepresentation = string | number;
 
 export interface CubeElement {
