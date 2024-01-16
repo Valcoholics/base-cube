@@ -7,10 +7,8 @@ import CubeState, {RotateDirection} from "./cubeState";
 import {createSquare, SquareMesh} from "./square";
 
 
-// to do: translating comments
-
 /**
- * 获取square向里平移0.5的方块大小的位置
+ * Get the position moved inside by 0.5 square size  
  */
 const getTemPos = (square: SquareMesh, squareSize: number) => {
     const moveVect = square.element.normal.clone().normalize().multiplyScalar(-0.5 * squareSize);
@@ -19,33 +17,41 @@ const getTemPos = (square: SquareMesh, squareSize: number) => {
     return pos.add(moveVect);
 };
 
+/**
+ * Cube class inherits from Group
+ */
 export class Cube extends Group {
-    private data: CubeData;
+
+    private data: CubeData; 
     public state!: CubeState;
+
+    /**
+     * Get all the SquareMesh children
+     */
     public get squares() {
         return this.children as SquareMesh[];
     }
 
     /**
-     * 魔方阶数
-     */
+     * Get the order of the cube puzzle
+     */   
     public get order() {
         return this.data.cubeOrder;
     }
 
-    /**
-     * 方块大小
+    /** 
+     * Get the size of the square blocks
      */
     public get squareSize() {
         return this.data.elementSize;
     }
 
     /**
-     * 是否处于完成状态
+     * Check if the cube is in finished state  
      */
     public get finish() {
         return this.state.validateFinish();
-    }
+}
 
     public constructor(order = 3) {
         super();
@@ -71,13 +77,14 @@ export class Cube extends Group {
     }
 
     /**
-     * 旋转一个面
-     * @param mousePrePos 旋转前的鼠标的屏幕坐标 
-     * @param mouseCurPos 此时的鼠标屏幕坐标
-     * @param controlSquare 控制的方块
-     * @param camera 相机
-     * @param winSize 窗口大小
-     */
+     * Rotate a face
+     * @param mousePrePos Mouse screen coordinate before rotate 
+     * @param mouseCurPos Current mouse screen coordinate
+     * @param controlSquare The control square
+     * @param camera Camera
+     * @param winSize Window size
+     */ 
+
     public rotateOnePlane(mousePrePos: Vector2, mouseCurPos: Vector2, controlSquare: SquareMesh, camera: Camera, winSize: {w: number; h: number}) {
         if (mouseCurPos.distanceTo(mousePrePos) < 5) {
             return;
@@ -95,10 +102,12 @@ export class Cube extends Group {
             const squareNormal = controlSquare.element.normal;
             const squarePos = controlSquare.element.pos;
 
-            // 与 controlSquare 在同一面的其他 Square
+            // Other Squares that are on the same face as controlSquare
             const commonDirSquares = this.squares.filter((square) => square.element.normal.equals(squareNormal) && !square.element.pos.equals(squarePos));
 
-            // square1 和 sqaure2 垂直和竖直方向的同一面的两个 SquareMesh
+            // square1 and square2 are two SquareMeshes on the same face, 
+            // in the vertical and horizontal direction relative to controlSquare
+
             let square1: SquareMesh | undefined;
             let square2: SquareMesh | undefined;
             for (let i = 0; i < commonDirSquares.length; i++) {
@@ -137,7 +146,8 @@ export class Cube extends Group {
             const square1ScreenPos = this.getSquareScreenPos(square1, camera, winSize) as Vector2;
             const square2ScreenPos = this.getSquareScreenPos(square2, camera, winSize) as Vector2;
 
-            // 记录可能旋转的四个方向
+        // Record possible four rotate directions
+
             const squareDirs: RotateDirection[] = [];
 
             const squareDir1 = {
@@ -163,9 +173,12 @@ export class Cube extends Group {
                 endSquare: controlSquare
             });
 
-            // 根据可能旋转的四个方向向量与鼠标平移方向的夹角确定旋转的方向，夹角最小的方向即为旋转方向
+        // Determine the actual rotate direction based on the angle between the four possible
+        // rotate direction vectors and the mouse move direction vector.
+        // The direction with the smallest angle is the actual rotate direction.
+
             let minAngle = Math.abs(getAngleBetweenTwoVector2(squareDirs[0].screenDir, screenDir));
-            let rotateDir = squareDirs[0];  // 最终确定的旋转方向
+            let rotateDir = squareDirs[0];  // The finally determined rotate direction
 
             for (let i = 0; i < squareDirs.length; i++) {
                 const angle = Math.abs(getAngleBetweenTwoVector2(squareDirs[i].screenDir, screenDir));
@@ -176,11 +189,12 @@ export class Cube extends Group {
                 }
             }
 
-            // 旋转轴：用法向量与旋转的方向的叉积计算
+       // Rotation axis: calculated by cross product of face normal and rotate direction
             const rotateDirLocal = rotateDir.endSquare.element.pos.clone().sub(rotateDir.startSquare.element.pos).normalize();
             const rotateAxisLocal = squareNormal.clone().cross(rotateDirLocal).normalize(); // 旋转的轴
 
-            // 旋转的方块：由 controlSquare 位置到要旋转的方块的位置的向量，与旋转的轴是垂直的，通过这一特性可以筛选出所有要旋转的方块
+
+        // Squares to rotate: vector from controlSquare position to rotate square position is perpendicular to rotate axis. Use this property to select all squares to rotate.            
             const rotateSquares: SquareMesh[] = [];
             const controlTemPos = getTemPos(controlSquare, this.data.elementSize);
 
@@ -195,16 +209,18 @@ export class Cube extends Group {
             this.state.setRotating(controlSquare, rotateSquares, rotateDir, rotateAxisLocal);
         }
 
-        const rotateSquares = this.state.activeSquares; // 旋转的方块
-        const rotateAxisLocal = this.state.rotateAxisLocal; // 旋转的轴
+        const rotateSquares = this.state.activeSquares; // Rotating squares
+        const rotateAxisLocal = this.state.rotateAxisLocal; //Rotation axis
 
-        // 旋转的角度：使用 screenDir 在旋转方向上的投影长度，投影长度越长，旋转角度越大
-        // 投影长度的正负值影响魔方旋转的角度方向
-        // 旋转的角度 = 投影的长度 / 魔方的尺寸 * 90度
+        // Rotate angle: use projected length of screenDir on rotate direction. 
+        // Longer projected length means larger rotate angle.
+        // Positive/negative projected length affects rotate direction.
+        // Rotate angle = projected length / cube size * 90 degrees
+
         const temAngle = getAngleBetweenTwoVector2(this.state.rotateDirection!.screenDir, screenDir);
         const screenDirProjectRotateDirLen = Math.cos(temAngle) * screenDir.length();
         const coarseCubeSize = this.getCoarseCubeSize(camera, winSize);
-        const rotateAnglePI = screenDirProjectRotateDirLen / coarseCubeSize * Math.PI * 0.5; // 旋转角度
+        const rotateAnglePI = screenDirProjectRotateDirLen / coarseCubeSize * Math.PI * 0.5; // Rotate angle
         const newRotateAnglePI = rotateAnglePI - this.state.rotateAnglePI;
         this.state.rotateAnglePI = rotateAnglePI;
 
@@ -218,11 +234,11 @@ export class Cube extends Group {
     }
 
     /**
-     * 旋转后需要更新 cube 的状态
+     * Need to update cube state after rotate
      */
     public getAfterRotateAnimation() {
         const needRotateAnglePI = this.getNeededRotateAngle();
-        const rotateSpeed = Math.PI * 0.5 / 500; // 1s 旋转90度
+        const rotateSpeed = Math.PI * 0.5 / 500; // Rotate 90 degrees per second 
         let rotatedAngle = 0;
         let lastTick: number;
         let rotateTick = (tick: number): boolean => {
@@ -256,21 +272,24 @@ export class Cube extends Group {
         return rotateTick;
     }
 
-    /**
-     * 旋转后更新状态
+    /** 
+     * Update state after rotate
      */
     private updateStateAfterRotate() {
-        // 旋转至正位，有时旋转的不是90度的倍数，需要修正到90度的倍数
+        // Sometimes the rotation is not a multiple of 90 degrees, need to snap to 90 degree
         const needRotateAnglePI = this.getNeededRotateAngle();
         this.state.rotateAnglePI += needRotateAnglePI;
 
-        // 更新 data：CubeElement 的状态，旋转后法向量、位置等发生了变化
-        const angleRelative360PI = this.state.rotateAnglePI % (Math.PI * 2);
-        // const timesOfRight = angleRelative360PI / rightAnglePI; // 旋转的角度相当于几个90度
+        // Update CubeElement data after rotation: 
+        // normal, position etc changed after rotation
 
+        const angleRelative360PI = this.state.rotateAnglePI % (Math.PI * 2);
+
+        // const timesOfRight = angleRelative360PI / rightAnglePI; 
+        // How many 90 degree rotations
         if (Math.abs(angleRelative360PI) > 0.1) {
 
-            // 更新位置和法向量
+            // Update position and normal after rotation
             const rotateMat2 = new Matrix4();
             rotateMat2.makeRotationAxis(this.state.rotateAxisLocal!, angleRelative360PI);
 
@@ -283,10 +302,11 @@ export class Cube extends Group {
                 const nor = this.state.activeSquares[i].element.normal.clone();
                 const pos = this.state.activeSquares[i].element.pos.clone();
 
-                nor.applyMatrix4(rotateMat2); // 旋转后的法向量
-                pos.applyMatrix4(rotateMat2); // 旋转后的位置
+                nor.applyMatrix4(rotateMat2); // Normal after rotation  
+                pos.applyMatrix4(rotateMat2); // Position after rotation
 
-                // 找到与旋转后对应的方块，更新它的颜色
+                // Find corresponding square after rotation to update color
+
                 for (let j = 0; j < this.state.activeSquares.length; j++) {
                     const nor2 = this.state.activeSquares[j].element.normal.clone();
                     const pos2 = this.state.activeSquares[j].element.pos.clone();
@@ -309,7 +329,9 @@ export class Cube extends Group {
     }
 
 
-
+    /**
+     * Get the angle that needs to rotate to the right angle
+     */  
     private getNeededRotateAngle() {
         const rightAnglePI = Math.PI * 0.5;
         const exceedAnglePI = Math.abs(this.state.rotateAnglePI) % rightAnglePI;
@@ -318,8 +340,9 @@ export class Cube extends Group {
 
         return needRotateAnglePI;
     }
+
     /**
-     * 获取一个粗糙的魔方屏幕尺寸
+     * Get a coarse screen size of the cube  
      */
     public getCoarseCubeSize(camera: Camera, winSize: {w: number; h: number}) {
         const width = this.order * this.squareSize;
@@ -337,7 +360,7 @@ export class Cube extends Group {
     }
 
     /**
-     * 获得 Square 的标准屏幕坐标
+     * Get the standard screen coordinate of the Square
      */
     private getSquareScreenPos(square: SquareMesh, camera: Camera, winSize: {w: number; h: number}) {
         if (!this.squares.includes(square)) {
@@ -354,7 +377,7 @@ export class Cube extends Group {
     }
 
     /**
-     * 打乱
+     * Disorder
      */
     public disorder() {
 

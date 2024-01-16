@@ -1,6 +1,5 @@
 import {Vector3} from "three";
 
-// to do: translating comments
 
 type ColorRepresentation = string | number;
 
@@ -27,7 +26,7 @@ class CubeData {
         return this._size;
     }
     public elements: CubeElement[] = [];
-    public constructor(cubeOrder = 3, colors: CubeColor = ["#fb3636", "#ff9351", "#fade70", "#9de16f", "#51acfa", "#da6dfa"]) {
+    public constructor(cubeOrder = 3, colors: CubeColor = ["#002066", "#99B9FF", "#FFFFFF", "#4782FF", "#0052ff", "#003AB8"]) {
         this.cubeOrder = cubeOrder;
         this.colors = colors;
         this.initElements();
@@ -49,9 +48,11 @@ class CubeData {
         this.initialFinishData();
     }
 
+
     /**
-     * 创建复原的数据
-     */
+    * Create restored data 
+    **/
+
     public initialFinishData() {
         this.elements = [];
         const border = (this.cubeOrder * this._size) / 2 - 0.5;
@@ -112,8 +113,9 @@ class CubeData {
     }
 
     /**
-     * 保存数据至 localStorage
+     * localStorage
      */
+
     public saveDataToLocal() {
         const data = JSON.stringify(this.elements);
 
@@ -123,9 +125,10 @@ class CubeData {
     }
 
     /**
-     * 从 localStorage 读取数据
+     * localStorage
      * @returns 
      */
+
     public getLocalData() {
         if (localStorage) {
             const data = localStorage.getItem(`${this.cubeOrder}-Rubik`);
@@ -148,6 +151,21 @@ class CubeData {
 
         return [];
     }
+
+    public resetCube() {
+        // Get reference to cube
+        const cube = new CubeData();
+        // Check if localStorage is supported
+        if (localStorage) {
+          // Remove saved cube data
+          localStorage.removeItem(`${cube.cubeOrder}-Rubik`);
+          // Can also clear everything
+          // localStorage.clear();
+        }
+        // Reset cube elements to solved state
+        cube.initialFinishData();
+        // Refresh visualization/rendering
+      }
 }
 
 export default CubeData;
